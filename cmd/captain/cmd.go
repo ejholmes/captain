@@ -7,6 +7,7 @@ import (
 	"github.com/harbur/captain"
 	"github.com/harbur/captain/Godeps/_workspace/src/github.com/fatih/color"
 	"github.com/harbur/captain/Godeps/_workspace/src/github.com/spf13/cobra"
+	"github.com/harbur/captain/hook"
 )
 
 // Options that are passed by CLI are mapped here for consumption
@@ -96,6 +97,15 @@ func handleCmd() {
 		},
 	}
 
+	var cmdServer = &cobra.Command{
+		Use:   "server",
+		Short: "Starts an http server that can build from GitHub webhooks",
+		Long:  `This will start an http server that will use captain to build Docker images whenever it receives a push event webhook from GitHub`,
+		Run: func(cmd *cobra.Command, args []string) {
+			hook.ListenAndServe(":8080", "secret")
+		},
+	}
+
 	var cmdVersion = &cobra.Command{
 		Use:   "version",
 		Short: "Display version",
@@ -118,7 +128,7 @@ It works by reading captain.yaml file which describes how to build, test, push a
 	captainCmd.PersistentFlags().StringVarP(&options.namespace, "namespace", "N", getNamespace(), "Set default image namespace")
 	captainCmd.PersistentFlags().BoolVarP(&color.NoColor, "no-color", "n", false, "Disable color output")
 	cmdBuild.Flags().BoolVarP(&options.force, "force", "f", false, "Force build even if image is already built")
-	captainCmd.AddCommand(cmdBuild, cmdTest, cmdPush, cmdPull, cmdVersion)
+	captainCmd.AddCommand(cmdBuild, cmdTest, cmdPush, cmdPull, cmdServer, cmdVersion)
 	captainCmd.Execute()
 }
 
