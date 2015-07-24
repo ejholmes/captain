@@ -4,7 +4,9 @@ import (
 	"fmt"
 	"io"
 	"io/ioutil"
+	"os"
 	"os/exec"
+	"path/filepath"
 	"strings"
 
 	"github.com/ejholmes/hookshot/events"
@@ -18,7 +20,15 @@ func Checkout(event events.Push, w io.Writer) (string, error) {
 
 	dir, err := ioutil.TempDir("", sha)
 	if err != nil {
-		return dir, err
+		return "", err
+	}
+
+	// We want to replicate the path structure that captain expects:
+	//
+	//	<user>/<repo>
+	dir = filepath.Join(dir, repo)
+	if err := os.MkdirAll(dir, 0770); err != nil {
+		return "", err
 	}
 
 	cmd := exec.Command("git", "clone", "--depth=50", fmt.Sprintf("--branch=%s", branch), fmt.Sprintf("git://github.com/%s.git", repo), dir)
