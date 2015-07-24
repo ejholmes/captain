@@ -13,6 +13,17 @@ import (
 	"github.com/ejholmes/hookshot/events"
 )
 
+// Write build output to stdout.
+var NewLogger logFactory = StdoutLogger
+
+// Logger represents an interface for something that can give us a place to
+// stream logs for the build event.
+type logFactory func(events.Push) io.Writer
+
+func StdoutLogger(event events.Push) io.Writer {
+	return os.Stdout
+}
+
 // NewServer returns a new http.Handler that will handle the `ping` and `push`
 // events from GitHub.
 func NewServer(secret string) http.Handler {
@@ -54,15 +65,20 @@ func Push(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	if err := captain(dir, os.Stdout, "build"); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	// Generate a new logger for this build event.
+	out := NewLogger(event)
 
-	if err := captain(dir, os.Stdout, "push"); err != nil {
-		http.Error(w, err.Error(), http.StatusInternalServerError)
-		return
-	}
+	go func() {
+		if err := captain(dir, out, "build"); err != nil {
+			io.WriteString(out, "error: "+err.Error())
+			return
+		}
+
+		if err := captain(dir, out, "push"); err != nil {
+			io.WriteString(out, "error: "+err.Error())
+			return
+		}
+	}()
 }
 
 func captain(dir string, w io.Writer, command string) error {
