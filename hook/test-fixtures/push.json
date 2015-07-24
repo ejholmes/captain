@@ -1,7 +1,7 @@
 {
-  "ref": "refs/heads/hook",
+  "ref": "refs/heads/master",
   "before": "0000000000000000000000000000000000000000",
-  "after": "f64491b433d74842cf7b43614d7406d900dbb70e",
+  "after": "32fb0d765cae2c15fb2fa15b5b989fb527704715",
   "created": true,
   "deleted": false,
   "forced": true,
@@ -9,7 +9,7 @@
   "compare": "https://github.com/ejholmes/captain/commit/f64491b433d7",
   "commits": [
     {
-      "id": "f64491b433d74842cf7b43614d7406d900dbb70e",
+      "id": "32fb0d765cae2c15fb2fa15b5b989fb527704715",
       "distinct": true,
       "message": "WIP.",
       "timestamp": "2015-07-24T10:30:44-07:00",
@@ -25,15 +25,13 @@
         "username": "ejholmes"
       },
       "added": [
-        "hook/hook.go",
-        "hook/test-fixtures/ping.json"
       ],
       "removed": [],
       "modified": []
     }
   ],
   "head_commit": {
-    "id": "f64491b433d74842cf7b43614d7406d900dbb70e",
+    "id": "32fb0d765cae2c15fb2fa15b5b989fb527704715",
     "distinct": true,
     "message": "WIP.",
     "timestamp": "2015-07-24T10:30:44-07:00",
@@ -49,8 +47,6 @@
       "username": "ejholmes"
     },
     "added": [
-      "hook/hook.go",
-      "hook/test-fixtures/ping.json"
     ],
     "removed": [],
     "modified": []

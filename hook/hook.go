@@ -5,9 +5,12 @@ package hook
 import (
 	"encoding/json"
 	"net/http"
+	"os"
+	"path/filepath"
 
 	"github.com/ejholmes/hookshot"
 	"github.com/ejholmes/hookshot/events"
+	"github.com/harbur/captain"
 )
 
 // NewServer returns a new http.Handler that will handle the `ping` and `push`
@@ -45,7 +48,18 @@ func Push(w http.ResponseWriter, r *http.Request) {
 		return
 	}
 
-	// Clone and checkout branch.
+	dir, err := Checkout(event, os.Stdout)
+	if err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
+
+	config := captain.NewConfig("", filepath.Join(dir, "captain.yml"), true)
+
+	if captain.Build(captain.BuildOptions{Config: config}); err != nil {
+		http.Error(w, err.Error(), http.StatusInternalServerError)
+		return
+	}
 	// Build
 	// Push
 }

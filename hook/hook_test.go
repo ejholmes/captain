@@ -1,9 +1,12 @@
 package hook
 
 import (
+	"encoding/json"
 	"net/http/httptest"
+	"os"
 	"testing"
 
+	"github.com/ejholmes/hookshot/events"
 	"github.com/ejholmes/hookshot/hooker"
 	"github.com/stretchr/testify/assert"
 )
@@ -13,7 +16,21 @@ const secret = "secret"
 
 func TestPing(t *testing.T) {
 	testServer(func(c *hooker.Client) {
-		resp, _ := c.Ping(hooker.DefaultPing)
+		resp, err := c.Ping(hooker.DefaultPing)
+		assert.Nil(t, err)
+		assert.Equal(t, 200, resp.StatusCode, "Expected a StatusOK response")
+	})
+}
+
+func TestPush(t *testing.T) {
+	var event events.Push
+
+	f, _ := os.Open("test-fixtures/push.json")
+	json.NewDecoder(f).Decode(&event)
+
+	testServer(func(c *hooker.Client) {
+		resp, err := c.Trigger("push", event)
+		assert.Nil(t, err)
 		assert.Equal(t, 200, resp.StatusCode, "Expected a StatusOK response")
 	})
 }
