@@ -1,3 +1,6 @@
 builder:
   build: Dockerfile
   image: harbur/captain-builder
+data:
+  build: Dockerfile.data
+  image: captain-builder-data

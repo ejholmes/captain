@@ -67,8 +67,7 @@ func Push(w http.ResponseWriter, r *http.Request) {
 
 	cmd := exec.Command("docker", "run",
 		"--privileged=true",
-		"-v", fmt.Sprintf("%s/.ssh:/root/.ssh:ro", os.Getenv("HOME")),
-		"-v", fmt.Sprintf("%s/.dockercfg:/root/.dockercfg:ro", os.Getenv("HOME")),
+		"--volumes-from=data",
 		"-e", fmt.Sprintf("REPOSITORY=%s", event.Repository.FullName),
 		"-e", fmt.Sprintf("BRANCH=%s", strings.Replace(event.Ref, "refs/heads/", "", -1)),
 		"-e", fmt.Sprintf("SHA=%s", event.HeadCommit.ID),
