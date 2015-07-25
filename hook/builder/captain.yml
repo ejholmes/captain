@@ -1,0 +1,3 @@
+builder:
+  build: Dockerfile
+  image: harbur/captain-builder
